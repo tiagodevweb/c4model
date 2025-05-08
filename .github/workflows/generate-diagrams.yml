@@ -2,8 +2,7 @@ name: Generate and Commit C4 Diagrams
 
 on:
   push:
-    paths:
-      - diagrams/**/*.puml
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
