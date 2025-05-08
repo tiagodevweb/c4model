@@ -1,16 +1,40 @@
 @startuml C4_Container
-!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
 
-Person(user, "Usuário")
+LAYOUT_WITH_LEGEND()
 
-System_Boundary(s1, "Sistema Web") {
-    Container(spa, "SPA", "React", "Interface que roda no navegador")
-    Container(api, "API Backend", "Node.js + Express", "Lida com regras de negócio e fornece dados")
-    ContainerDb(db, "Banco de Dados", "PostgreSQL", "Armazena dados persistentes")
+Person(user, "Usuário", "Usuário final que acessa o sistema via navegador")
+
+System_Boundary(system, "Sistema Web") {
+
+  Container(spa, "Frontend SPA", "JavaScript", "Aplicação web executada no navegador")
+  Container(api, "API Gateway", "Node.js", "Roteador e gateway para microsserviços")
+  
+  Container(ms1, "Microserviço 1", "Node.js", "Responsável por função 1")
+  Container(ms2, "Microserviço 2", "Node.js", "Responsável por função 2")
+  Container(ms3, "Microserviço 3", "Node.js", "Responsável por função 3")
+  Container(ms4, "Microserviço 4", "Node.js", "Responsável por função 4")
+  Container(ms5, "Microserviço 5", "Node.js", "Responsável por função 5")
+
+  ContainerDb(db1, "Banco MS1", "PostgreSQL", "Banco de dados do microserviço 1")
+  ContainerDb(db2, "Banco MS2", "PostgreSQL", "Banco de dados do microserviço 2")
+  ContainerDb(db3, "Banco MS3", "PostgreSQL", "Banco de dados do microserviço 3")
+  ContainerDb(db4, "Banco MS4", "PostgreSQL", "Banco de dados do microserviço 4")
+  ContainerDb(db5, "Banco MS5", "PostgreSQL", "Banco de dados do microserviço 5")
 }
 
-Rel(user, spa, "Usa", "HTTPS")
-Rel(spa, api, "Chama APIs", "REST/JSON")
-Rel(api, db, "Lê e escreve", "PostgreSQL Protocol")
+Rel(user, spa, "Usa via navegador")
+Rel(spa, api, "Chama via HTTPS")
+Rel(api, ms1, "Chama")
+Rel(api, ms2, "Chama")
+Rel(api, ms3, "Chama")
+Rel(api, ms4, "Chama")
+Rel(api, ms5, "Chama")
+
+Rel(ms1, db1, "Lê/Escreve")
+Rel(ms2, db2, "Lê/Escreve")
+Rel(ms3, db3, "Lê/Escreve")
+Rel(ms4, db4, "Lê/Escreve")
+Rel(ms5, db5, "Lê/Escreve")
 
 @enduml

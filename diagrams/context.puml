@@ -1,12 +1,34 @@
 @startuml C4_Context
-!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Context.puml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
-Person(user, "Usuário", "Pessoa que usa o sistema")
-System(spa_system, "Sistema Web", "Uma SPA acessada via navegador")
+LAYOUT_WITH_LEGEND()
 
-System_Ext(api_external, "API de Terceiros", "Serviço externo usado pela aplicação")
+Person(user, "Usuário", "Usuário final que acessa o sistema via navegador")
 
-Rel(user, spa_system, "Usa", "HTTPS")
-Rel(spa_system, api_external, "Consome dados de")
+System(spa, "Aplicação Web (SPA)", "Aplicação single-page hospedada no S3")
+System(api, "API Gateway", "Node.js - expõe a API pública e roteia requisições para microsserviços")
+System_Ext(s3, "Amazon S3", "Hospedagem estática de arquivos da SPA")
+System_Ext(dbCluster, "Cluster PostgreSQL", "Cluster gerenciado na nuvem com bancos dedicados")
+
+System(ms1, "Microserviço 1", "Lida com funcionalidade específica")
+System(ms2, "Microserviço 2", "Lida com funcionalidade específica")
+System(ms3, "Microserviço 3", "Lida com funcionalidade específica")
+System(ms4, "Microserviço 4", "Lida com funcionalidade específica")
+System(ms5, "Microserviço 5", "Lida com funcionalidade específica")
+
+Rel(user, spa, "Acessa")
+Rel(spa, s3, "Obtém código estático")
+Rel(spa, api, "Faz chamadas HTTP para")
+Rel(api, ms1, "Roteia requisições para")
+Rel(api, ms2, "Roteia requisições para")
+Rel(api, ms3, "Roteia requisições para")
+Rel(api, ms4, "Roteia requisições para")
+Rel(api, ms5, "Roteia requisições para")
+
+Rel(ms1, dbCluster, "Usa DB1")
+Rel(ms2, dbCluster, "Usa DB2")
+Rel(ms3, dbCluster, "Usa DB3")
+Rel(ms4, dbCluster, "Usa DB4")
+Rel(ms5, dbCluster, "Usa DB5")
 
 @enduml
