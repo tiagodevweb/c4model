@@ -3,43 +3,33 @@ name: Generate C4 Diagrams
 on:
   push:
     paths:
-      - "diagrams/**/*.puml"
-      - ".github/workflows/generate-diagrams.yml"
+      - diagrams/**/*.puml
+  workflow_dispatch:
 
 jobs:
-  build:
+  generate:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: "temurin"
-          java-version: "17"
+      - name: Setup PlantUML
+        uses: plantuml/plantuml-action@v1.5.0
 
-      - name: Install PlantUML
-        run: sudo apt-get install plantuml -y
-
-      - name: Generate PNGs from PUML
+      - name: Generate PNG diagrams
         run: |
           mkdir -p output
-          find diagrams -name "*.puml" -exec plantuml -tpng -o ../output {} +
+          for file in diagrams/*.puml; do
+            plantuml -tpng "$file" -o ./output
+          done
 
-      - name: Commit and Push diagrams
-        env:
-          GIT_AUTHOR_NAME: github-actions
-          GIT_AUTHOR_EMAIL: actions@github.com
-          GIT_COMMITTER_NAME: github-actions
-          GIT_COMMITTER_EMAIL: actions@github.com
+      - name: Commit and push diagrams
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-
-          git add output/
-          git commit -m "Update C4 diagrams [skip ci]" || echo "No changes"
-
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git pull --rebase
+          git add output/*.png || true
+          git commit -m "Update diagrams [skip ci]" || echo "No changes to commit"
           git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}
           git push origin HEAD
