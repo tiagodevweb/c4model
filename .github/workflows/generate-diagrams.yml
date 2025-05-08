@@ -31,14 +31,15 @@ jobs:
             java -jar plantuml.jar -tpng "$f" -o ../output
           done
 
-      - name: Commit and push diagrams to main
-        if: github.ref == 'refs/heads/main'
+      - name: Push diagrams
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}
           git add output/*.png
           git commit -m "Update diagrams [skip ci]" || echo "No changes"
-          git push
+          git push origin HEAD
+
 
       - name: Upload generated diagrams as artifact
         uses: actions/upload-artifact@v4
