@@ -37,10 +37,13 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+          git stash --include-untracked
           git pull --rebase
+          git stash pop || true
           git add output/*.png || true
           git commit -m "Add generated diagrams [skip ci]" || echo "No changes"
           git push
+
 
       - name: Upload generated diagrams as artifact
         uses: actions/upload-artifact@v4
