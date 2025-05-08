@@ -1,0 +1,9 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Context.puml
+
+Person(user, "Usuário")
+System(spa_system, "Sistema Web SPA", "Single Page App no navegador")
+
+Rel(user, spa_system, "Usa")
+
+@enduml
