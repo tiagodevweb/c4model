@@ -1,4 +1,4 @@
-name: Generate and Commit C4 Diagrams
+name: Generate PlantUML Diagrams
 
 on:
   push:
@@ -8,21 +8,27 @@ on:
 jobs:
   generate:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          distribution: 'temurin'
+          java-version: '17'
 
-      - name: Install PlantUML
-        run: sudo apt-get install -y plantuml
+      - name: Install PlantUML and Graphviz
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y graphviz
+          curl -L -o plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
 
-      - name: Generate Diagrams
+      - name: Generate diagrams
         run: |
           mkdir -p output
-          for file in diagrams/*.puml; do
-            plantuml -tpng "$file" -o output/
+          for f in diagrams/*.puml; do
+            java -jar plantuml.jar -tpng "$f" -o ../output
           done
 
       - name: Commit and Push Diagrams
@@ -33,3 +39,9 @@ jobs:
           git add output/*.png || true
           git commit -m "Add generated diagrams [skip ci]" || echo "No changes"
           git push
+
+      - name: Upload generated diagrams as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: c4-diagrams
+          path: output/
