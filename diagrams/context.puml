@@ -1,9 +1,12 @@
-@startuml
+@startuml C4_Context
 !includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Context.puml
 
-Person(user, "Usuário")
-System(spa_system, "Sistema Web SPA", "Single Page App no navegador")
+Person(user, "Usuário", "Pessoa que usa o sistema")
+System(spa_system, "Sistema Web", "Uma SPA acessada via navegador")
 
-Rel(user, spa_system, "Usa")
+System_Ext(api_external, "API de Terceiros", "Serviço externo usado pela aplicação")
+
+Rel(user, spa_system, "Usa", "HTTPS")
+Rel(spa_system, api_external, "Consome dados de")
 
 @enduml

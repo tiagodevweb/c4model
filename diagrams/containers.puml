@@ -1,0 +1,16 @@
+@startuml C4_Container
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "Usuário")
+
+System_Boundary(s1, "Sistema Web") {
+    Container(spa, "SPA", "React", "Interface que roda no navegador")
+    Container(api, "API Backend", "Node.js + Express", "Lida com regras de negócio e fornece dados")
+    ContainerDb(db, "Banco de Dados", "PostgreSQL", "Armazena dados persistentes")
+}
+
+Rel(user, spa, "Usa", "HTTPS")
+Rel(spa, api, "Chama APIs", "REST/JSON")
+Rel(api, db, "Lê e escreve", "PostgreSQL Protocol")
+
+@enduml
